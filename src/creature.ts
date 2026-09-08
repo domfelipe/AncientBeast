@@ -1771,14 +1771,11 @@ export class Creature {
 		buffDebuffArray.forEach((buff) => {
 			$j.each(buff.alterations, (key, value) => {
 				if (typeof value === 'string') {
-					// Multiplication Buff
-					if (value.match(/\*/)) {
-						this.stats[key] = eval(this.stats[key] + value);
-					}
-
-					// Division Debuff
-					if (value.match(/\//)) {
-						this.stats[key] = eval(this.stats[key] + value);
+					// Multiplication Buff / Division Debuff — explicit arithmetic, no dynamic evaluation
+					const md = value.match(/^([*/])\s*(-?\d+(?:\.\d+)?)$/);
+					if (md) {
+						const n = parseFloat(md[2]);
+						this.stats[key] = md[1] === '*' ? this.stats[key] * n : this.stats[key] / n;
 					}
 				}
 
